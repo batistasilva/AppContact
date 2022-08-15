@@ -11,13 +11,16 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-#include <vector>
+#include <sstream>  
 #include <fstream>
-#include <algorithm>
+#include <iomanip>
+#include <cstdlib>
+
+#include "ShowMsg.h"
 
 using namespace std;
 
-class Contact {
+class Contact: public ShowMsg {
 public:
     Contact();
     Contact(const Contact& orig);
@@ -65,6 +68,7 @@ public:
 
     Contact* findContact(string);
     void showContacts();
+    bool saveContacts();
     void insertAfter(Contact*, string, string, string, string);
     void insertBefore(string, string, string, string, string);
     void getContact();
@@ -117,12 +121,23 @@ public:
         this->phone = phone;
     }
 
+    string getFilename() const {
+        return filename;
+    }
+
+    void setFilename(string filename) {
+        this->filename = filename;
+    }
+
+
+
 private:
     string name;
     string address;
     string phone;
     string email;
-
+    //
+    string filename; //ponteiro para arquivo
 };
 
 

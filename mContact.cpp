@@ -13,6 +13,7 @@ int main(int argc, char** argv) {
     Contact* f;
     Contact* a;
     Contact* c;
+    ShowMsg* msg;
 
     while (c->printDashboard()) {
 
@@ -20,6 +21,7 @@ int main(int argc, char** argv) {
 
         switch (n) {
             case 1:
+                
                 cout << "----------------------------------------------------" << endl;
                 cout << "|   Please enter with data in the fields...        |" << endl;
                 cout << "----------------------------------------------------" << endl;
@@ -79,9 +81,10 @@ int main(int argc, char** argv) {
                 //
                 f = a->find(searching);
                 if (f == NULL) {
-                    cout << "|--------------------------------------------------|" << endl;
-                    cout << "|          Contact Not found...!!!                 |" << endl;
-                    cout << "|--------------------------------------------------|" << endl;
+                    msg->ShowMessage("Contact Nor Found...!!", 5, 6);
+//                    cout << "|--------------------------------------------------|" << endl;
+//                    cout << "|          Contact Not found...!!!                 |" << endl;
+//                    cout << "|--------------------------------------------------|" << endl;
                 } else {
                     cin.ignore();
                     //
@@ -131,6 +134,13 @@ int main(int argc, char** argv) {
                 a->showContacts();
                 break;
             case 8:
+                if(a->saveContacts()){
+                    msg->ShowMessage("Contact Saved Sucessfully...!!", 7, 6);
+                }else{
+                    msg->ShowMessage("Error to Save Contact to file...!!", 4, 2);                    
+                }   
+                break;            
+            case 9:
                 return 0;
                 break;
             default:

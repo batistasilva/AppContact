@@ -68,7 +68,8 @@ void Contact::addEnd(string name, string phone, string address, string email) {
 void Contact::addBegin(string name, string phone, string address, string email) {
     Contact* new_contact = new Contact(name, phone, address, email);
 
-    cout << "Inside addBegin()!!!" << endl;
+    ShowMessage("Inside addBegin...!!!", 1, 2);
+    
 
     if (last == NULL || head == NULL) {
         head = new_contact;
@@ -117,13 +118,15 @@ Contact* Contact::findContact(string serachQuery) {
     Contact* f = find(serachQuery);
 
     if (f == NULL){
-        cout << "|--------------------------------------------------|" << endl;
-        cout << "|          Contact Not found...!!!                 |" << endl;
-        cout << "|--------------------------------------------------|" << endl;
+        ShowMessage("Contact Nor Found...!!", 5, 6);
+//        cout << "|--------------------------------------------------|" << endl;
+//        cout << "|          Contact Not found...!!!                 |" << endl;
+//        cout << "|--------------------------------------------------|" << endl;
     } else {
-        cout << "|--------------------------------------------------|" << endl;
-        cout << "|          Contact found Sucessfully...!!!         |" << endl;
-        cout << "|--------------------------------------------------|" << endl;
+        ShowMessage("Contact found Sucessfully..!!", 5, 6);
+//        cout << "|--------------------------------------------------|" << endl;
+//        cout << "|          Contact found Sucessfully...!!!         |" << endl;
+//        cout << "|--------------------------------------------------|" << endl;
         f->getContact();
         cout << "----------------------------------------------------------" << endl;
     }
@@ -287,6 +290,41 @@ void Contact::showContacts() {
 
 };
 
+/**
+ * printing all of contacts in the list
+ */
+bool Contact::saveContacts() {
+    Contact* cf;
+    string str_list;
+    system("clear");
+
+    cout << "\n\n" << "----------------------------------------------------------" << endl;
+
+    if (last == NULL || head == NULL) {
+        cout << "|--------------------------------------------------|" << endl;
+        cout << "|   We found nothing in the list to Save...!!!     |" << endl;
+        cout << "|--------------------------------------------------|" << endl;
+        return false;
+    }
+
+
+    ofstream outfile("contact.txt");
+    
+    int c = 1;
+    for (Contact* n = head; n != NULL; n = n->next) {
+        cout << c << ") ";
+        c++;
+        str_list = n->name +";"+n->address+";"+n->email+";"+n->phone+"\n";
+        outfile << str_list;
+        
+        cout << "----------------------------------------------------------" << endl;
+    }
+
+    return true;
+};
+
+
+
 bool Contact::printDashboard() {
 
     cout << "|----------------------------------------------------------------|" << "\n";
@@ -299,7 +337,8 @@ bool Contact::printDashboard() {
     cout << "| " << "( 5 ) find specific contact in list by searching based on name |" << endl;
     cout << "| " << "( 6 ) delete specific contact by searching                     |" << endl;
     cout << "| " << "( 7 ) show all of contacts                                     |" << endl;
-    cout << "| " << "( 8 ) exit                                                     |" << endl;
+    cout << "| " << "( 8 ) Save Contact to File                                     |" << endl;
+    cout << "| " << "( 9 ) exit                                                     |" << endl;    
     cout << "|----------------------------------------------------------------|" << "\n";
     cout << "   select : ";
     return true;
