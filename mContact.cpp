@@ -82,9 +82,6 @@ int main(int argc, char** argv) {
                 f = a->find(searching);
                 if (f == NULL) {
                     msg->ShowMessage("Contact Nor Found...!!", 5, 6);
-//                    cout << "|--------------------------------------------------|" << endl;
-//                    cout << "|          Contact Not found...!!!                 |" << endl;
-//                    cout << "|--------------------------------------------------|" << endl;
                 } else {
                     cin.ignore();
                     //
@@ -111,25 +108,61 @@ int main(int argc, char** argv) {
                 }
                 break;
             case 4:
-                cout << "=== searching by name  ===== \n" << endl << "enter serachQuery :==>";
-                cin >> searching;
-                cout << "\n please enter name , phone , address , email by order ( seprate by one space or enter ) :" << endl << " :==>  ";
-                cin >> name >> phone >> address >> email;
-                a->insertBefore(searching, name, phone, address, email);
-            case 5:
                 cout << "----------------------------------------------------" << endl;
                 cout << "|                   Search by Name                 |" << endl;
                 cout << "----------------------------------------------------" << endl;
-                cout << "Enter Serach Query :==> ";
+                cout << "Enter Search Query :==> ";
+                cin.ignore();
+                getline(cin, searching, '\n');
+                //
+                f = a->find(searching);
+                if (f == NULL) {
+                    msg->ShowMessage("Contact Not Found...!!", 5, 6);
+                } else {
+                    cin.ignore();
+                    //
+                    cout << "----------------------------------------------------" << endl;
+                    cout << "|   Please enter with data in the fields...        |" << endl;
+                    cout << "----------------------------------------------------" << endl;
+
+                    cout << "Name: ";
+                    getline(cin, name, '\n');
+
+                    //cin.ignore();
+                    cout << "Address: ";
+                    getline(cin, address, '\n');
+
+                    //cin.ignore();
+                    cout << "E-mail: ";
+                    getline(cin, email, '\n');
+
+                    //cin.ignore();
+                    cout << "Phone: ";
+                    getline(cin, phone, '\n');
+
+                    a->insertBefore(searching, name, phone, address, email);
+                }
+                break;
+             case 5:
+                cout << "----------------------------------------------------" << endl;
+                cout << "|                   Search by Name                 |" << endl;
+                cout << "----------------------------------------------------" << endl;
+                cout << "Enter Search Query :==> ";
                 cin.ignore();
                 getline(cin, searching, '\n');
 
                 f = a->findContact(searching);
                 break;
             case 6:
-                cout << "=== searching by name  ===== \n" << endl << "enter serachQuery :==>";
-                cin >> searching;
+                cout << "----------------------------------------------------" << endl;
+                cout << "|                   Search by Name                 |" << endl;
+                cout << "----------------------------------------------------" << endl;
+                cout << "Enter Search Query :==> ";
+                cin.ignore();
+                getline(cin, searching, '\n');
+
                 a->deleteContact(searching);
+                break;
             case 7:
                 a->showContacts();
                 break;

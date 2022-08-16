@@ -118,15 +118,9 @@ Contact* Contact::findContact(string serachQuery) {
     Contact* f = find(serachQuery);
 
     if (f == NULL){
-        ShowMessage("Contact Nor Found...!!", 5, 6);
-//        cout << "|--------------------------------------------------|" << endl;
-//        cout << "|          Contact Not found...!!!                 |" << endl;
-//        cout << "|--------------------------------------------------|" << endl;
+        ShowMessage("Contact Not Found...!!", 5, 6);
     } else {
         ShowMessage("Contact found Sucessfully..!!", 5, 6);
-//        cout << "|--------------------------------------------------|" << endl;
-//        cout << "|          Contact found Sucessfully...!!!         |" << endl;
-//        cout << "|--------------------------------------------------|" << endl;
         f->getContact();
         cout << "----------------------------------------------------------" << endl;
     }
@@ -136,9 +130,9 @@ Contact* Contact::findContact(string serachQuery) {
 
 /**
  *
- *	deleting contact in list
+ * deleting contact in list
  *
- * 	you can type name of contact, with one space seprated in serachQuery parameter
+ * you can type name of contact, with one space seprated in serachQuery parameter
  * 
  * @param string serachQuery [string for searching list]
  * 
@@ -160,7 +154,7 @@ void Contact::deleteContact(string serachQuery) {
     Contact* temp = head;
 
     if (temp->next == NULL) {
-        cout << "\n ================ \n i can't find :|" << endl;
+        ShowMessage("I Can not find...!!", 5, 6);
         return;
     }
 
@@ -171,7 +165,7 @@ void Contact::deleteContact(string serachQuery) {
         temp = temp->next;
 
         if (temp->next == NULL) {
-            cout << "\n ================ \n i can't find :|" << endl;
+            ShowMessage("I Can not find...!!", 5, 6);
             return;
         };
     }
@@ -205,10 +199,10 @@ void Contact::deleteContact(string serachQuery) {
 void Contact::insertAfter(Contact* n_contact, string name, string phone, string address, string email) {
 
     if (n_contact == NULL) {
-        cout << "\n ================ \n i can't find :|" << endl;
+        ShowMessage("I Can not find...!!", 5, 6);
         return;
-
     }
+    
     //
     Contact* new_contact = new Contact(name, phone, address, email);
     new_contact->next = n_contact->next;
@@ -232,7 +226,7 @@ void Contact::insertAfter(Contact* n_contact, string name, string phone, string 
 void Contact::insertBefore(string serachQuery, string name, string phone, string address, string email) {
 
     if (head == NULL) {
-        cout << "nothing" << endl;
+        ShowMessage("Nothing...!!", 5, 6);
         return;
     };
 
@@ -249,17 +243,15 @@ void Contact::insertBefore(string serachQuery, string name, string phone, string
         temp = temp->next;
 
         if (temp->next == NULL) {
-            cout << "\n ================ \n i can't find :|" << endl;
+            ShowMessage("I Can not find...!!", 5, 6);
             return;
         };
     }
 
     if (temp != NULL) {
-
         Contact* new_contact = new Contact(name, phone, address, email);
         new_contact->next = temp->next;
         temp->next = new_contact;
-
         size++;
     }
 }
@@ -273,11 +265,8 @@ void Contact::showContacts() {
     cout << "\n\n" << "----------------------------------------------------------" << endl;
 
     if (last == NULL || head == NULL) {
-        cout << "|--------------------------------------------------|" << endl;
-        cout << "|          We found nothing in the list...!!!      |" << endl;
-        cout << "|--------------------------------------------------|" << endl;
+        ShowMessage("We found nothing in the list...!!", 5, 6);
         return;
-
     }
 
     int c = 1;
@@ -301,12 +290,9 @@ bool Contact::saveContacts() {
     cout << "\n\n" << "----------------------------------------------------------" << endl;
 
     if (last == NULL || head == NULL) {
-        cout << "|--------------------------------------------------|" << endl;
-        cout << "|   We found nothing in the list to Save...!!!     |" << endl;
-        cout << "|--------------------------------------------------|" << endl;
+        ShowMessage("We found nothing in the list to Save...!!", 5, 6);
         return false;
     }
-
 
     ofstream outfile("contact.txt");
     

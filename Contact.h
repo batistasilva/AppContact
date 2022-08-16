@@ -72,6 +72,7 @@ public:
     void insertAfter(Contact*, string, string, string, string);
     void insertBefore(string, string, string, string, string);
     void getContact();
+    
     /**
      * prototype for printing dashboard
      * 
