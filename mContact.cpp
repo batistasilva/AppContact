@@ -14,6 +14,9 @@ int main(int argc, char** argv) {
     Contact* a;
     Contact* c;
     ShowMsg* msg;
+    
+    //Read data from file
+    a->readFile();
 
     while (c->printDashboard()) {
 
@@ -21,7 +24,6 @@ int main(int argc, char** argv) {
 
         switch (n) {
             case 1:
-                
                 cout << "----------------------------------------------------" << endl;
                 cout << "|   Please enter with data in the fields...        |" << endl;
                 cout << "----------------------------------------------------" << endl;
@@ -143,7 +145,7 @@ int main(int argc, char** argv) {
                     a->insertBefore(searching, name, phone, address, email);
                 }
                 break;
-             case 5:
+            case 5:
                 cout << "----------------------------------------------------" << endl;
                 cout << "|                   Search by Name                 |" << endl;
                 cout << "----------------------------------------------------" << endl;
@@ -167,12 +169,12 @@ int main(int argc, char** argv) {
                 a->showContacts();
                 break;
             case 8:
-                if(a->saveContacts()){
+                if (a->saveContacts()) {
                     msg->ShowMessage("Contact Saved Sucessfully...!!", 7, 6);
-                }else{
-                    msg->ShowMessage("Error to Save Contact to file...!!", 4, 2);                    
-                }   
-                break;            
+                } else {
+                    msg->ShowMessage("Error to Save Contact to file...!!", 4, 2);
+                }
+                break;
             case 9:
                 return 0;
                 break;

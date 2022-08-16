@@ -10,6 +10,9 @@
 Contact *head;
 Contact *last;
 int size;
+//
+//string filename = "contact.txt";
+ifstream ifs;
 
 Contact::Contact() {
 
@@ -19,6 +22,40 @@ Contact::Contact(const Contact& orig) {
 }
 
 Contact::~Contact() {
+}
+
+/***
+ * Read file database()
+ */
+void Contact::readFile() {
+    //Open file name
+    string line, c;
+    
+    string filename = "contact.txt";
+    
+    ifs.open(filename);
+    
+    // Check if the file has been opened successfully.
+    if (ifs.is_open()) {
+        //
+        cout << "File Read Sucessfully!..." << endl;
+        //
+        while (getline(ifs, line)) {
+            //
+            cout << "New Line()" << endl;
+            cout << line << endl;
+            stringstream ss_str(line); // X is an object of stringstream that references the S string  
+            while (getline(ss_str, c, ';')) {              
+                  cout << "-->>" << "Char: [";
+                  cout << c;
+                  cout << " ]";
+            }
+            //
+            cout << "[ Finishing Line to Get New One..." << endl;
+        }       
+        //
+      //  addBegin(name, phone, address, email);
+    }
 }
 
 /**
@@ -69,7 +106,6 @@ void Contact::addBegin(string name, string phone, string address, string email) 
     Contact* new_contact = new Contact(name, phone, address, email);
 
     ShowMessage("Inside addBegin...!!!", 1, 2);
-    
 
     if (last == NULL || head == NULL) {
         head = new_contact;
@@ -90,14 +126,14 @@ void Contact::addBegin(string name, string phone, string address, string email) 
  * @param string serachQuery [string for searching list]
  * @return contact*   [returing founded contact]
  */
-Contact* Contact::find(string serachQuery) {
+Contact* Contact::find(string searchQuery) {
 
     Contact* n = NULL;
 
     for (n = head; n != NULL; n = n->next)
 
-        if (n->getName() == serachQuery ||
-                n->getName().substr(0, serachQuery.length()) == serachQuery) {
+        if (n->getName() == searchQuery ||
+                n->getName().substr(0, searchQuery.length()) == searchQuery) {
 
             return n;
         }
@@ -114,10 +150,10 @@ Contact* Contact::find(string serachQuery) {
  * @param string serachQuery [string for searching list]
  * @return contact*   [returing founded contact]
  */
-Contact* Contact::findContact(string serachQuery) {
-    Contact* f = find(serachQuery);
+Contact* Contact::findContact(string searchQuery) {
+    Contact* f = find(searchQuery);
 
-    if (f == NULL){
+    if (f == NULL) {
         ShowMessage("Contact Not Found...!!", 5, 6);
     } else {
         ShowMessage("Contact found Sucessfully..!!", 5, 6);
@@ -137,11 +173,11 @@ Contact* Contact::findContact(string serachQuery) {
  * @param string serachQuery [string for searching list]
  * 
  */
-void Contact::deleteContact(string serachQuery) {
+void Contact::deleteContact(string searchQuery) {
 
     if (
-            head->getName() == serachQuery ||
-            head->getName() == serachQuery) {
+            head->getName() == searchQuery ||
+            head->getName() == searchQuery) {
 
         Contact* temp = head->next;
         delete head;
@@ -158,8 +194,8 @@ void Contact::deleteContact(string serachQuery) {
         return;
     }
 
-    while (temp->next->getName() != serachQuery &&
-            head->getName() != serachQuery &&
+    while (temp->next->getName() != searchQuery &&
+            head->getName() != searchQuery &&
             temp != NULL) {
 
         temp = temp->next;
@@ -177,8 +213,8 @@ void Contact::deleteContact(string serachQuery) {
         delete temp2;
 
         if (
-                last->getName() == serachQuery ||
-                last->getName() == serachQuery) {
+                last->getName() == searchQuery ||
+                last->getName() == searchQuery) {
             last = temp;
         }
 
@@ -202,7 +238,7 @@ void Contact::insertAfter(Contact* n_contact, string name, string phone, string 
         ShowMessage("I Can not find...!!", 5, 6);
         return;
     }
-    
+
     //
     Contact* new_contact = new Contact(name, phone, address, email);
     new_contact->next = n_contact->next;
@@ -223,23 +259,23 @@ void Contact::insertAfter(Contact* n_contact, string name, string phone, string 
  * @param string address [address of contact]
  * @param string email [email of contact]
  */
-void Contact::insertBefore(string serachQuery, string name, string phone, string address, string email) {
+void Contact::insertBefore(string searchQuery, string name, string phone, string address, string email) {
 
     if (head == NULL) {
         ShowMessage("Nothing...!!", 5, 6);
         return;
     };
 
-    if (head->getName() == serachQuery ||
-            head->getName() == serachQuery) {
+    if (head->getName() == searchQuery ||
+            head->getName() == searchQuery) {
         addBegin(name, phone, address, email);
         return;
     }
 
     Contact* temp = head;
 
-    while (temp->next->getName() != serachQuery &&
-            head->getName() != serachQuery && temp != NULL) {
+    while (temp->next->getName() != searchQuery &&
+            head->getName() != searchQuery && temp != NULL) {
         temp = temp->next;
 
         if (temp->next == NULL) {
@@ -295,21 +331,19 @@ bool Contact::saveContacts() {
     }
 
     ofstream outfile("contact.txt");
-    
+
     int c = 1;
     for (Contact* n = head; n != NULL; n = n->next) {
         cout << c << ") ";
         c++;
-        str_list = n->name +";"+n->address+";"+n->email+";"+n->phone+"\n";
+        str_list = n->name + ";" + n->address + ";" + n->email + ";" + n->phone + "\n";
         outfile << str_list;
-        
+
         cout << "----------------------------------------------------------" << endl;
     }
 
     return true;
 };
-
-
 
 bool Contact::printDashboard() {
 
@@ -324,7 +358,7 @@ bool Contact::printDashboard() {
     cout << "| " << "( 6 ) delete specific contact by searching                     |" << endl;
     cout << "| " << "( 7 ) show all of contacts                                     |" << endl;
     cout << "| " << "( 8 ) Save Contact to File                                     |" << endl;
-    cout << "| " << "( 9 ) exit                                                     |" << endl;    
+    cout << "| " << "( 9 ) exit                                                     |" << endl;
     cout << "|----------------------------------------------------------------|" << "\n";
     cout << "   select : ";
     return true;

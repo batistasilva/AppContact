@@ -62,9 +62,10 @@ public:
 
     Contact* find(string);
 
-    void addBegin(string, string, string, string);
-    void addEnd(string, string, string, string);
+    void addBegin(string name, string phone, string address, string email);
+    void addEnd(string name, string phone, string address, string email);
     void deleteContact(string);
+    void readFile();
 
     Contact* findContact(string);
     void showContacts();
@@ -122,15 +123,6 @@ public:
         this->phone = phone;
     }
 
-    string getFilename() const {
-        return filename;
-    }
-
-    void setFilename(string filename) {
-        this->filename = filename;
-    }
-
-
 
 private:
     string name;
@@ -138,7 +130,6 @@ private:
     string phone;
     string email;
     //
-    string filename; //ponteiro para arquivo
 };
 
 
