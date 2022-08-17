@@ -30,11 +30,11 @@ Contact::~Contact() {
 void Contact::readFile() {
     //Open file name
     string line, c;
-    
+
     string filename = "contact.txt";
-    
+
     ifs.open(filename);
-    
+
     // Check if the file has been opened successfully.
     if (ifs.is_open()) {
         //
@@ -42,19 +42,12 @@ void Contact::readFile() {
         //
         while (getline(ifs, line)) {
             //
-            cout << "New Line()" << endl;
-            cout << line << endl;
-            stringstream ss_str(line); // X is an object of stringstream that references the S string  
-            while (getline(ss_str, c, ';')) {              
-                  cout << "-->>" << "Char: [";
-                  cout << c;
-                  cout << " ]";
-            }
+            setContactFromFLine(line);
             //
             cout << "[ Finishing Line to Get New One..." << endl;
-        }       
+        }
         //
-      //  addBegin(name, phone, address, email);
+        //  addBegin(name, phone, address, email);
     }
 }
 
@@ -336,14 +329,85 @@ bool Contact::saveContacts() {
     for (Contact* n = head; n != NULL; n = n->next) {
         cout << c << ") ";
         c++;
-        str_list = n->name + ";" + n->address + ";" + n->email + ";" + n->phone + "\n";
+        str_list = "&" + n->name + ";" + n->address + ";" + n->email + ";" + n->phone + ";#\n";
         outfile << str_list;
 
         cout << "----------------------------------------------------------" << endl;
     }
 
     return true;
-};
+}
+
+/***
+ * Set Contact from file line.
+ */
+void Contact::setContactFromFLine(string fileline) {
+    Contact  ct;
+    string str_name, str_address, str_phone, str_email;
+    bool InToFillName = true;
+    bool InToFillAddress = false;
+    bool InToFillPhone = false;
+    bool InToFillEmail = false;
+   
+    //
+    for (auto str : fileline) {
+
+        if (str != '&' && InToFillName == true) {//if enter, start to get name
+            if (str == ';') {
+                ct.name = str_name;
+                cout << "\n" << "My Name: " << ct.name << endl;
+                //
+                InToFillName = false; //Set to false to say that is okay
+                InToFillAddress = true; //Set to True to start fill in the next if
+                str='?';//did this for facility, to get data on next field 
+            } else {
+                str_name += str;
+            }
+        }//End the Name
+
+        if (InToFillAddress == true) {//if enter, start to get address
+            //
+            if (str == ';') {
+                ct.address = str_address;
+                cout << "Address: " << ct.address << endl;
+                InToFillAddress = false; //Set to false to say that is okay
+                InToFillEmail = true; //Set to True to start fill in the next if    
+                str='?';
+            } else {
+                if(str != '?')  str_address += str;         
+            }
+        }//End the Address      
+//
+        if (InToFillEmail == true) {//if enter, start to get email
+            if (str == ';') {
+                ct.setEmail(str_email);
+                cout << "Email: " << ct.getEmail() << endl;;
+                InToFillEmail = false; //Set to false to say that is okay
+                InToFillPhone = true; //Set to True to start fill in the next if    
+                str ='?';
+            } else {
+                if(str != '?')  str_email += str;             
+            }
+        }//End the Email
+//
+        if (InToFillPhone == true) {//if enter, start to get phone
+            //
+            if (str == ';') {
+                ct.setPhone(str_phone);
+                cout << "Phone: " << ct.getPhone() << endl;
+                InToFillPhone = false; //Set to false to say that is okay 
+            } else {
+                if(str != '?') str_phone += str;                
+            }
+        }//End the Phone          
+
+        if (str == 0x26) InToFillName = true;
+    }
+    
+    addBegin(ct.name, ct.phone, ct.address, ct.email);
+    
+    cout << " End Read line" << endl;
+}
 
 bool Contact::printDashboard() {
 

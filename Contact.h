@@ -73,6 +73,7 @@ public:
     void insertAfter(Contact*, string, string, string, string);
     void insertBefore(string, string, string, string, string);
     void getContact();
+    void setContactFromFLine(string fileline);
     
     /**
      * prototype for printing dashboard
@@ -107,14 +108,6 @@ public:
         this->name = name;
     }
 
-    Contact* getNext() const {
-        return next;
-    }
-
-    void setNext(Contact* next) {
-        this->next = next;
-    }
-
     string getPhone() const {
         return phone;
     }
@@ -122,7 +115,6 @@ public:
     void setPhone(string phone) {
         this->phone = phone;
     }
-
 
 private:
     string name;
