@@ -1,0 +1,44 @@
+/*** 
+ * File:   MaDBContact.cpp
+ * Author: batista
+ * 
+ * Created on 19 de agosto de 2022, 12:36
+ ***/
+
+#include "MaDBContact.h"
+
+MaDBContact::MaDBContact() {
+
+}
+
+void MaDBContact::getConnection(){
+    ShowMsg* msg;
+    
+    try {
+        // Instantiate Driver
+        sql::Driver* driver = sql::mariadb::get_driver_instance();
+        
+        // Configure Connection
+        sql::SQLString url("jdbc:mariadb://localhost:3306/ContactDB");
+        //
+        sql::Properties properties({
+            {"user", "system"},
+            {"password", "sys2133"}
+        });
+
+        // Establish Connection
+        unique_ptr<sql::Connection> conn(driver->connect(url, properties));
+        
+        if(conn->isValid()){
+           msg->ShowMessage("Connection Sucessully...!!!", 5, 7);
+        }
+               
+        // Close Connection
+        conn->close();
+    } catch (sql::SQLException& e) {
+        std::cerr << "Error Connecting to MariaDB Platform: " << e.what() << std::endl;
+        // Exit (Failed)
+        //return 1;
+    }    
+}
+

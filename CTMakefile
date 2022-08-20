@@ -1,0 +1,79 @@
+## -*- Makefile -*-
+##
+## Usuário: batista
+## Hora: 20 de ago. de 2022 16:34:18
+## Makefile created by Oracle Developer Studio.
+##
+## Este arquivo é gerado automaticamente.
+##
+
+
+#### Definições do compilador e da ferramenta compartilhadas por todos os destinos de build #####
+CCC = g++
+CXX = g++
+BASICOPTS = -g
+CCFLAGS = $(BASICOPTS)
+CXXFLAGS = $(BASICOPTS)
+CCADMIN = 
+
+
+# Definir os diretórios de destino.
+TARGETDIR_RunContact=.
+
+
+all: $(TARGETDIR_RunContact)/RunContact
+
+## Destino: RunContact
+CPPFLAGS_RunContact = \
+	-I/usr/local/include/mariadb/conncpp
+OBJS_RunContact =  \
+	$(TARGETDIR_RunContact)/ShowMsg.o \
+	$(TARGETDIR_RunContact)/mContact.o \
+	$(TARGETDIR_RunContact)/Contact.o \
+	$(TARGETDIR_RunContact)/MaDBContact.o
+USERLIBS_RunContact = -L/usr/local/lib/mariadb/ -lmariadbcpp $(SYSLIBS_RunContact) 
+DEPLIBS_RunContact =   
+LDLIBS_RunContact = $(USERLIBS_RunContact)
+
+
+# Link ou archive
+$(TARGETDIR_RunContact)/RunContact: $(TARGETDIR_RunContact) $(OBJS_RunContact) $(DEPLIBS_RunContact)
+	$(LINK.cc) $(CCFLAGS_RunContact) $(CPPFLAGS_RunContact) -o $@ $(OBJS_RunContact) $(LDLIBS_RunContact)
+
+
+# Compilar arquivos de código-fonte nos arquivos .o
+$(TARGETDIR_RunContact)/ShowMsg.o: $(TARGETDIR_RunContact) ShowMsg.cpp
+	$(COMPILE.cc) $(CCFLAGS_RunContact) $(CPPFLAGS_RunContact) -o $@ ShowMsg.cpp
+
+$(TARGETDIR_RunContact)/mContact.o: $(TARGETDIR_RunContact) mContact.cpp
+	$(COMPILE.cc) $(CCFLAGS_RunContact) $(CPPFLAGS_RunContact) -o $@ mContact.cpp
+
+$(TARGETDIR_RunContact)/Contact.o: $(TARGETDIR_RunContact) Contact.cpp
+	$(COMPILE.cc) $(CCFLAGS_RunContact) $(CPPFLAGS_RunContact) -o $@ Contact.cpp
+
+$(TARGETDIR_RunContact)/MaDBContact.o: $(TARGETDIR_RunContact) MySql/MaDBContact.cpp
+	$(COMPILE.cc) $(CCFLAGS_RunContact) $(CPPFLAGS_RunContact) -o $@ MySql/MaDBContact.cpp
+
+
+
+#### Limpar o destino exclui todos os arquivos gerados ####
+clean:
+	rm -f \
+		$(TARGETDIR_RunContact)/RunContact \
+		$(TARGETDIR_RunContact)/ShowMsg.o \
+		$(TARGETDIR_RunContact)/mContact.o \
+		$(TARGETDIR_RunContact)/Contact.o \
+		$(TARGETDIR_RunContact)/MaDBContact.o
+	$(CCADMIN)
+	rm -f -r $(TARGETDIR_RunContact)
+
+
+# Criar o diretório de destino (se necessário)
+$(TARGETDIR_RunContact):
+	mkdir -p $(TARGETDIR_RunContact)
+
+
+# Ativar verificação de dependências
+.KEEP_STATE:
+.KEEP_STATE_FILE:.make.state.GNU-amd64-Linux
+

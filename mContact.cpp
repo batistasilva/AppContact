@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include "Contact.h"
+#include "MySql/MaDBContact.h"
 
 using namespace std;
 
@@ -8,67 +9,40 @@ using namespace std;
  */
 int main(int argc, char** argv) {
 
-    int n;
+    int n, j, o;
     string name, phone, address, email, searching;
     Contact* f;
     Contact* a;
-    Contact* c;
+    Contact* ct;
     ShowMsg* msg;
+    //
+    MaDBContact* madb;
+    //
+    madb->setUsername("system");
+    madb->setPassword("sys2133");
+    madb->setDb("ContactDB");    
+    madb->testConnection();
     
     //Read data from file
-    a->readFile();
-
-    while (c->printDashboard()) {
+    a->readFile();   
+        
+    while (ct->printDashboard()) {
 
         cin >> n;
 
         switch (n) {
             case 1:
-                cout << "----------------------------------------------------" << endl;
-                cout << "|   Please enter with data in the fields...        |" << endl;
-                cout << "----------------------------------------------------" << endl;
 
-                cin.ignore();
-                cout << "Name: ";
-                getline(cin, name, '\n');
-
-                //cin.ignore();
-                cout << "Address: ";
-                getline(cin, address, '\n');
-
-                //cin.ignore();
-                cout << "E-mail: ";
-                getline(cin, email, '\n');
-
-                //cin.ignore();
-                cout << "Phone: ";
-                getline(cin, phone, '\n');
-
-                a->addBegin(name, phone, address, email);
+                ct = ct->getContactFilled();//Fill data to fields
+                
+                a->addBegin(ct->getName(), ct->getPhone(), ct->getAddress(), ct->getEmail());
                 cout << "done :D" << endl;
                 break;
 
             case 2:
-                cout << "----------------------------------------------------" << endl;
-                cout << "|   Please enter with data in the fields...        |" << endl;
-                cout << "----------------------------------------------------" << endl;
-
-                cin.ignore();
-                cout << "Name: ";
-                getline(cin, name, '\n');
-
-                //cin.ignore();
-                cout << "Address: ";
-                getline(cin, address, '\n');
-
-                //cin.ignore();
-                cout << "E-mail: ";
-                getline(cin, email, '\n');
-
-                //cin.ignore();
-                cout << "Phone: ";
-                getline(cin, phone, '\n');
-
+                
+                ct = ct->getContactFilled();//Fill data to fields
+                //
                 a->addEnd(name, phone, address, email);
                 cout << "done :D" << endl;
 
@@ -82,31 +56,12 @@ int main(int argc, char** argv) {
                 getline(cin, searching, '\n');
                 //
                 f = a->find(searching);
+                //
                 if (f == NULL) {
                     msg->ShowMessage("Contact Nor Found...!!", 5, 6);
                 } else {
-                    cin.ignore();
-                    //
-                    cout << "----------------------------------------------------" << endl;
-                    cout << "|   Please enter with data in the fields...        |" << endl;
-                    cout << "----------------------------------------------------" << endl;
-
-                    cout << "Name: ";
-                    getline(cin, name, '\n');
-
-                    //cin.ignore();
-                    cout << "Address: ";
-                    getline(cin, address, '\n');
-
-                    //cin.ignore();
-                    cout << "E-mail: ";
-                    getline(cin, email, '\n');
-
-                    //cin.ignore();
-                    cout << "Phone: ";
-                    getline(cin, phone, '\n');
-
-                    a->insertAfter(f, name, phone, address, email);
+                   ct = ct->getContactFilled();//Fill data to fields
+                   a->insertAfter(f, ct->getName(), ct->getPhone(), ct->getAddress(), ct->getEmail());
                 }
                 break;
             case 4:
@@ -118,31 +73,12 @@ int main(int argc, char** argv) {
                 getline(cin, searching, '\n');
                 //
                 f = a->find(searching);
+                //
                 if (f == NULL) {
                     msg->ShowMessage("Contact Not Found...!!", 5, 6);
                 } else {
-                    cin.ignore();
-                    //
-                    cout << "----------------------------------------------------" << endl;
-                    cout << "|   Please enter with data in the fields...        |" << endl;
-                    cout << "----------------------------------------------------" << endl;
-
-                    cout << "Name: ";
-                    getline(cin, name, '\n');
-
-                    //cin.ignore();
-                    cout << "Address: ";
-                    getline(cin, address, '\n');
-
-                    //cin.ignore();
-                    cout << "E-mail: ";
-                    getline(cin, email, '\n');
-
-                    //cin.ignore();
-                    cout << "Phone: ";
-                    getline(cin, phone, '\n');
-
-                    a->insertBefore(searching, name, phone, address, email);
+                   ct = ct->getContactFilled();//Fill data to fields
+                   a->insertBefore(searching, ct->getName(), ct->getPhone(), ct->getAddress(), ct->getEmail());
                 }
                 break;
             case 5:
@@ -152,7 +88,6 @@ int main(int argc, char** argv) {
                 cout << "Enter Search Query :==> ";
                 cin.ignore();
                 getline(cin, searching, '\n');
-
                 f = a->findContact(searching);
                 break;
             case 6:
@@ -176,8 +111,53 @@ int main(int argc, char** argv) {
                 }
                 break;
             case 9:
+                while(ct->showMenuSqLite3()){
+                    cin >> j;
+                    switch (j){
+                        case 1:
+                            //Add data to SQLite3 contact
+                            break;
+                        case 2:
+                            //
+                            break;
+                        case 3:
+                            //do something
+                            break;
+                        case 4:
+                            //do something
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                //safeContactToSQLite3()
                 return 0;
                 break;
+            case 10:
+                while(ct->showMenuMariaDB()){
+                    cin >> o;
+                    switch (o){
+                        case 1:
+                            //Add data to MariaDB contact
+                            break;
+                        case 2:
+                            //
+                            break;
+                        case 3:
+                            //do something
+                            break;
+                        case 4:
+                            //do something
+                            break;
+                        default:
+                            break;
+                    }
+                }                
+                //madb->getConnection();
+                break;
+            case 11:
+                return 0;
+                break;                
             default:
                 break;
         }

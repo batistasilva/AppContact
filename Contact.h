@@ -4,6 +4,15 @@
  *
  * Created on 12 de agosto de 2022, 14:50
  */
+//g++ -o mysqlconnect $(mysql_config --cflags) mysqlconnect.cpp $(mysql_config --libs)
+//g++ -o example tasks.cpp  -I/usr/local/include/mariadb/conncpp/  -L/usr/local/lib/mariadb/ -lmariadbcpp 
+/***
+ * Doing that:
+   LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/mariadb/
+   export LD_LIBRARY_PATH
+ * You'll can do that:
+ * g++ -o testSelect testSelect.cpp    -L/usr/local/lib/mariadb/ -lmariadbcpp
+ */
 
 #ifndef CONTACT_H
 #define CONTACT_H
@@ -68,6 +77,7 @@ public:
     void readFile();
 
     Contact* findContact(string);
+    Contact* getContactFilled();
     void showContacts();
     bool saveContacts();
     void insertAfter(Contact*, string, string, string, string);
@@ -81,7 +91,8 @@ public:
      * @return [boolean for Infinite loop]
      */
     bool printDashboard();
-    
+    bool showMenuMariaDB();   
+    bool showMenuSqLite3();      
     //
 
     string getAddress() const {
