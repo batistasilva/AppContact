@@ -24,7 +24,7 @@
 #include <fstream>
 #include <iomanip>
 #include <cstdlib>
-
+#include "MySql/MaDBContact.h"
 #include "ShowMsg.h"
 
 using namespace std;
@@ -80,6 +80,8 @@ public:
     Contact* getContactFilled();
     void showContacts();
     bool saveContacts();
+    bool saveContactsToMariaDB();
+    bool saveContactsToSqLite3();
     void insertAfter(Contact*, string, string, string, string);
     void insertBefore(string, string, string, string, string);
     void getContact();

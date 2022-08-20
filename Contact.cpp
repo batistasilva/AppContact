@@ -349,6 +349,22 @@ bool Contact::saveContacts() {
     return true;
 }
 
+bool Contact::saveContactsToMariaDB(){
+      //
+    MaDBContact* madb;
+    //
+    madb->setUsername("system");
+    madb->setPassword("sys2133");
+    madb->setDb("ContactDB");
+    madb->testConnection();
+  
+}
+
+bool Contact::saveContactsToSqLite3(){
+    
+}
+
+
 /***
  * Set Contact from file line.
  */

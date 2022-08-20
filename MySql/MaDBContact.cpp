@@ -27,14 +27,9 @@ bool MaDBContact::testConnection(){
         });
 
         // Establish Connection
-        unique_ptr<sql::Connection> conn(driver->connect(url, properties));
-        
-//        if(conn->isValid()){
-//           msg->ShowMessage("Connection Sucessfully...!!!", 5, 7);
-//        }
-               
+        unique_ptr<sql::Connection> conn(driver->connect(url, properties));                     
         // Close Connection
-       // conn->close();
+        conn->close();
     } catch (sql::SQLException& e) {
         std::cerr << "Error Connecting to MariaDB Platform: " << e.what() << std::endl;
         // Exit (Failed)
