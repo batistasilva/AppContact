@@ -26,13 +26,20 @@
 
 using namespace std;
 
-class MaDBContact: public Contact {
+class Contact;
+class MaDBContact{
 public:
     MaDBContact();
     //
 
+    MaDBContact(string db, string username, string password){
+       this->db = db;
+       this->username = username;
+       this->password = password;
+    }
+
     //
-    void deleteContact(std::unique_ptr<sql::Connection> &conn, Contact * contact);
+    void deleteContact(std::unique_ptr<sql::Connection> &conn, Contact * ct);
     void updateContact(std::unique_ptr<sql::Connection> &conn, Contact* contact);
     void addContact(std::unique_ptr<sql::Connection> &conn, Contact* contact);
     void showAllContact(std::unique_ptr<sql::Connection> &conn);

@@ -13,13 +13,14 @@ int main(int argc, char** argv) {
     Contact* a;
     Contact* ct;
     ShowMsg* msg;
-
+    
     //Read data from file
     a->readFile();
     while (ct->printDashboard()) {
         cin >> n;
         switch (n) {
             case 1:
+                cout << "Inside addBegin..." << endl;
                 ct = ct->getContactFilled(); //Fill data to fields
                 a->addBegin(ct->getName(), ct->getPhone(), ct->getAddress(), ct->getEmail());
                 cout << "done :D" << endl;
@@ -94,6 +95,7 @@ int main(int argc, char** argv) {
                 break;
             case 9:
                 while (ct->showMenuSqLite3()) {
+                    cin.ignore();
                     cin >> j;
                     switch (j) {
                         case 1:
@@ -110,6 +112,7 @@ int main(int argc, char** argv) {
                             break;
                         case 5:
                             //do something
+                            return 0;
                             break;
                         default:
                             break;
@@ -120,15 +123,21 @@ int main(int argc, char** argv) {
                 break;
             case 10:
                 while (ct->showMenuMariaDB()) {
+                    cin.ignore();
                     cin >> o;
                     switch (o) {
                         case 1:
+                            msg->ShowMessage("Inside Saved Contact to MariaDB..!!", 7, 6); 
+                            if(ct->saveContactsToMariaDB())
+                               msg->ShowMessage("Contact Saved Sucessfully...!!", 7, 6); 
                             //Add data to MariaDB contact
                             break;
                         case 2:
+                            msg->ShowMessage("Inside Load Contact to MariaDB..!!", 7, 6); 
                             //
                             break;
                         case 3:
+                            msg->ShowMessage("Delete Contact to MariaDB..!!", 7, 6); 
                             //do something
                             break;
                         case 4:
@@ -136,6 +145,7 @@ int main(int argc, char** argv) {
                             break;
                         case 5:
                             //do something
+                            return 0;
                             break;
                         default:
                             break;

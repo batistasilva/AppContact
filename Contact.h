@@ -24,6 +24,9 @@
 #include <fstream>
 #include <iomanip>
 #include <cstdlib>
+#include <string>
+#include <cstring>
+#include <mariadb/conncpp.hpp>
 #include "MySql/MaDBContact.h"
 #include "ShowMsg.h"
 

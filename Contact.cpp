@@ -139,7 +139,8 @@ Contact* Contact::find(string searchQuery) {
  * getContactFilled to save on MariaDB contact Table
  */
 Contact* Contact::getContactFilled() {
-    Contact * contact;
+    string name, address, email, phone;
+
     //
     cout << "----------------------------------------------------" << endl;
     cout << "|   Please enter with data in the fields...        |" << endl;
@@ -147,21 +148,22 @@ Contact* Contact::getContactFilled() {
 
     cin.ignore();
     cout << "Name: ";
-    getline(cin, contact->name, '\n');
+    getline(cin, name, '\n');
 
     //cin.ignore();
     cout << "Address: ";
-    getline(cin, contact->address, '\n');
+    getline(cin, address, '\n');
 
     //cin.ignore();
     cout << "E-mail: ";
-    getline(cin, contact->email, '\n');
+    getline(cin, email, '\n');
 
     //cin.ignore();
     cout << "Phone: ";
-    getline(cin, contact->phone, '\n');
-    //
-    
+    getline(cin, phone, '\n');
+    //       
+    Contact* contact = new Contact(name, phone, address, email);
+
     return contact;
 }
 
@@ -349,21 +351,76 @@ bool Contact::saveContacts() {
     return true;
 }
 
-bool Contact::saveContactsToMariaDB(){
-      //
-    MaDBContact* madb;
+bool Contact::saveContactsToMariaDB() {
+    //
+    MaDBContact* madb = new MaDBContact();
+
+    Contact* contact = new Contact;
+    string str_list;
     //
     madb->setUsername("system");
     madb->setPassword("sys2133");
     madb->setDb("ContactDB");
-    madb->testConnection();
-  
+
+    try {
+        ShowMessage("Inside Contact::saveContactsToMariaDB()!!", 7, 6);
+        // Instantiate Driver
+        sql::Driver* driver = sql::mariadb::get_driver_instance();
+
+        cout << "DB: " << madb->getDb() << " User: " << madb->getUsername() << " Password: " << madb->getPassword();
+
+        // Configure Connection
+        sql::SQLString url("jdbc:mariadb://localhost:3306/" + madb->getDb());
+        //        //
+        sql::Properties properties({
+            {"user", madb->getUsername()},
+            {"password", madb->getPassword()}
+        });
+
+        // Establish Connection
+        std::unique_ptr<sql::Connection> conn(driver->connect(url, properties));
+        //
+        if (!conn) {
+            ShowMessage("Error Connecting to MariaDB!!!", 5, 6);
+            return false;
+            // exit(EXIT_FAILURE);
+        }
+        //
+        if (last == NULL || head == NULL) {
+            ShowMessage("We found nothing in the list to Save...!!", 5, 6);
+            return false;
+        }
+        //        //
+        for (Contact* n = head; n != NULL; n = n->next) {
+            //
+            contact->name = n->name;
+            contact->address = n->address;
+            contact->email = n->email;
+            contact->phone = n->phone;
+            //
+            str_list = "&" + n->name + ";" + n->address + ";" + n->email + ";" + n->phone + ";#\n";
+            cout << str_list << endl;
+            
+            madb->addContact(conn, contact);
+            //
+            cout << "----------------------------------------------------------" << endl;
+        }
+        //
+        //        // Close Connection
+        conn->close();
+    } catch (sql::SQLException& e) {
+        std::cerr << "Error Connecting to MariaDB Platform: " << e.what() << std::endl;
+        // Exit (Failed)
+        return false;
+    }
+
+    return true;
 }
 
-bool Contact::saveContactsToSqLite3(){
-    
-}
+bool Contact::saveContactsToSqLite3() {
 
+    return true;
+}
 
 /***
  * Set Contact from file line.
@@ -457,7 +514,6 @@ bool Contact::printDashboard() {
     //
     return true;
 }
-
 
 bool Contact::showMenuMariaDB() {
 

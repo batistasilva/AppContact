@@ -12,8 +12,7 @@ MaDBContact::MaDBContact() {
 }
 
 bool MaDBContact::testConnection(){
-    ShowMsg* msg;
-    
+    //
     try {
         // Instantiate Driver
         sql::Driver* driver = sql::mariadb::get_driver_instance();
@@ -29,6 +28,7 @@ bool MaDBContact::testConnection(){
         // Establish Connection
         unique_ptr<sql::Connection> conn(driver->connect(url, properties));                     
         // Close Connection
+        
         conn->close();
     } catch (sql::SQLException& e) {
         std::cerr << "Error Connecting to MariaDB Platform: " << e.what() << std::endl;
@@ -45,7 +45,7 @@ bool MaDBContact::testConnection(){
 void MaDBContact::addContact(std::unique_ptr<sql::Connection>& conn, Contact* contact){
     try {
         // Create a new PreparedStatement
-        std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT into Contact (name, address, email, phone) values (?,?,?,?)"));
+        std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement("INSERT into contact (name, address, email, phone) values (?,?,?,?)"));
         // Bind values to SQL statement
         stmnt->setString(1, contact->getName());
         stmnt->setString(2, contact->getAddress());
