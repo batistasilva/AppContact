@@ -2,7 +2,7 @@
 /dist
 /build
 .RunContact
-.contact.txt
+contact.txt
 .dep.inc
 *.o
 .gitignore~
