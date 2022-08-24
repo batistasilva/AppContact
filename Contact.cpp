@@ -400,7 +400,7 @@ bool Contact::saveContactsToMariaDB() {
             //
             str_list = "&" + n->name + ";" + n->address + ";" + n->email + ";" + n->phone + ";#\n";
             cout << str_list << endl;
-            
+
             madb->addContact(conn, contact);
             //
             cout << "----------------------------------------------------------" << endl;
@@ -516,17 +516,54 @@ bool Contact::printDashboard() {
 }
 
 bool Contact::showMenuMariaDB() {
+    int op;
+    bool RunWhile = true;
+    
+    while (RunWhile) {
+        //
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "| " << "                   Menu MariaDB                          |" << endl;
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "| " << "( 1 ) [ Save All Contacts from List to Database ]        |" << endl;
+        cout << "| " << "( 2 ) [ Load All Contacts to List from Database ]        |" << endl;
+        cout << "| " << "( 3 ) [ Delete All Contacts from Database       ]        |" << endl;
+        cout << "| " << "( 4 ) [        Return to Main Menu              ]        |" << endl;
+        cout << "| " << "( 5 ) [               Exit                      ]        |" << endl;
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "   select : ";
+        //
+        cin.ignore();
+        cin >> op;
+        //
+        switch (op) {
+            case 1:
+                ShowMessage("Inside Saved Contact to MariaDB..!!", 7, 6);
+                if (saveContactsToMariaDB())
+                    ShowMessage("Contact Saved Sucessfully...!!", 7, 6);
+                //Add data to MariaDB contact
+                break;
+            case 2:
+                ShowMessage("Inside Load Contact to MariaDB..!!", 7, 6);
+                //
+                break;
+            case 3:
+                ShowMessage("Delete Contact to MariaDB..!!", 7, 6);
+                //do something
+                break;
+            case 4:
+                //do something
+                break;
+            case 5:
+                //do something
+                return true;
+                break;
+            default:
+                break;
+        }
+    }
 
-    cout << "|----------------------------------------------------------------|" << "\n";
-    cout << "| " << "                   Menu MariaDB                          |" << endl;
-    cout << "|----------------------------------------------------------------|" << "\n";
-    cout << "| " << "( 1 ) [ Save All Contacts from List to Database ]        |" << endl;
-    cout << "| " << "( 2 ) [ Load All Contacts to List from Database ]        |" << endl;
-    cout << "| " << "( 3 ) [ Delete All Contacts from Database       ]        |" << endl;
-    cout << "| " << "( 4 ) [        Return to Main Menu              ]        |" << endl;
-    cout << "| " << "( 5 ) [               Exit                      ]        |" << endl;
-    cout << "|----------------------------------------------------------------|" << "\n";
-    cout << "   select : ";
+
+
     //
     return true;
 }

@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
                 f = a->find(searching);
                 //
                 if (f == NULL) {
-                    msg->ShowMessage("Contact Nor Found...!!", 5, 6);
+                    msg->ShowMessage("Contact Not Found...!!", 5, 6);
                 } else {
                     ct = ct->getContactFilled(); //Fill data to fields
                     a->insertAfter(f, ct->getName(), ct->getPhone(), ct->getAddress(), ct->getEmail());
@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
                             break;
                         case 5:
                             //do something
-                            return 0;
+                            return false;
                             break;
                         default:
                             break;
@@ -122,35 +122,7 @@ int main(int argc, char** argv) {
                 return 0;
                 break;
             case 10:
-                while (ct->showMenuMariaDB()) {
-                    cin.ignore();
-                    cin >> o;
-                    switch (o) {
-                        case 1:
-                            msg->ShowMessage("Inside Saved Contact to MariaDB..!!", 7, 6); 
-                            if(ct->saveContactsToMariaDB())
-                               msg->ShowMessage("Contact Saved Sucessfully...!!", 7, 6); 
-                            //Add data to MariaDB contact
-                            break;
-                        case 2:
-                            msg->ShowMessage("Inside Load Contact to MariaDB..!!", 7, 6); 
-                            //
-                            break;
-                        case 3:
-                            msg->ShowMessage("Delete Contact to MariaDB..!!", 7, 6); 
-                            //do something
-                            break;
-                        case 4:
-                            //do something
-                            break;
-                        case 5:
-                            //do something
-                            return 0;
-                            break;
-                        default:
-                            break;
-                    }
-                }
+
                 //madb->getConnection();
                 break;
             case 11:
