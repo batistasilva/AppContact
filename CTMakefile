@@ -31,7 +31,7 @@ OBJS_RunContact =  \
 	$(TARGETDIR_RunContact)/mContact.o \
 	$(TARGETDIR_RunContact)/Contact.o \
 	$(TARGETDIR_RunContact)/MaDBContact.o
-USERLIBS_RunContact = -L/usr/local/lib/mariadb/ -lmariadbcpp $(SYSLIBS_RunContact) 
+USERLIBS_RunContact = -L/usr/local/lib/mariadb/ -lmariadbcpp -l sqlite3 $(SYSLIBS_RunContact) 
 DEPLIBS_RunContact =   
 LDLIBS_RunContact = $(USERLIBS_RunContact)
 

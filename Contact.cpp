@@ -466,7 +466,6 @@ bool Contact::saveContactsToMariaDB() {
             cout << "----------------------------------------------------------" << endl;
         }
         //
-        //        // Close Connection
         conn->close();
     } catch (sql::SQLException& e) {
         std::cerr << "Error Connecting to MariaDB Platform: " << e.what() << std::endl;
@@ -552,7 +551,92 @@ bool Contact::delAllContactsToMariaDB() {
     return true;
 }
 
+static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
+    int i;
+    for (i = 0; i < argc; i++) {
+        cout << azColName[i] << argv[i] << endl;
+    }
+    cout << endl;
+    return 0;
+}
+
+bool Contact::testIfContactExist() {
+    sqlite3 *db;
+    int rc;
+
+    rc = sqlite3_open("Sqlite/database.db", &db);
+
+    if (rc) {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return false;
+    } else {
+        fprintf(stderr, "Opened database successfully\n");
+    }
+
+    //
+    sqlite3_close(db);
+    return true;
+}
+
+/***
+ * Creating Contact to SqLite3
+ */
+bool Contact::createContactsToSqLite3() {
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+    char *sql;
+    /* Open database */
+    rc = sqlite3_open("Sqlite/database.db", &db);
+    //
+    if (rc) {
+        cout << stderr << "Can't open database:" << sqlite3_errmsg(db) << endl;
+        return (0);
+    } else {
+        cout << stdout << "Opened database successfully" << endl;
+    }
+
+    /* Create SQL statement */
+    sql = "CREATE TABLE contact(id PRIMARY KEY NOT NULL, name TEXT NOT NULL, address CHAR(50) NOT NULL, email CHAR(50),phone CHAR(30));";
+
+    /* Execute SQL statement */
+    rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+
+    if (rc != SQLITE_OK) {
+        cout << stderr << "SQL error: " << zErrMsg << endl;
+        sqlite3_free(zErrMsg);
+    } else {
+        cout << stdout << "Table created successfully" << endl;
+    }
+    //
+    sqlite3_close(db);
+
+    return true;
+}
+
+/***
+ * Save Contact to SqLite3
+ */
 bool Contact::saveContactsToSqLite3() {
+    //
+
+    if (createContactsToSqLite3())
+        ShowMessage("Contact to Sqlite3, Created Sucessfully!!!", 5, 6);
+
+    //
+    return true;
+}
+
+bool Contact::showContactsToSqLite3() {
+
+
+    return true;
+}
+
+/***
+ * Remove All Contacts to SqLite3
+ */
+bool Contact::delAllContactsToSqLite3() {
 
     return true;
 }
@@ -866,17 +950,17 @@ void Contact::showMenuSqLite3() {
         //
         switch (op) {
             case 1:
-                ShowMessage("Inside Saved Contact to MariaDB..!!", 7, 6);
-                if (saveContactsToMariaDB())
+                ShowMessage("Inside Saved Contact to SqLite3..!!", 7, 6);
+                if (saveContactsToSqLite3())
                     ShowMessage("Contact Saved Sucessfully...!!", 7, 6);
                 //Add data to MariaDB contact
                 break;
             case 2:
-                ShowMessage("Inside Load Contact to MariaDB..!!", 7, 6);
+                ShowMessage("Inside Load Contact to SqLite3..!!", 7, 6);
                 //
                 break;
             case 3:
-                ShowMessage("Delete Contact to MariaDB..!!", 7, 6);
+                ShowMessage("Delete Contact to SqLite3..!!", 7, 6);
                 //do something
                 break;
             case 4:

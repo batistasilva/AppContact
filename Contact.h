@@ -27,6 +27,7 @@
 #include <string>
 #include <cstring>
 #include <mariadb/conncpp.hpp>
+#include <sqlite3.h>
 #include "MySql/MaDBContact.h"
 #include "ShowMsg.h"
 
@@ -90,7 +91,12 @@ public:
     bool showContactsToMariaDB();
     bool delAllContactsToMariaDB();
     //
+    bool testIfContactExist();
+    bool createContactsToSqLite3();
     bool saveContactsToSqLite3();
+    bool showContactsToSqLite3();
+    bool delAllContactsToSqLite3();    
+    //
     void insertAfter(Contact*, string, string, string, string);
     void insertBefore(string, string, string, string, string);
     void getContact();

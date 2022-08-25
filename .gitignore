@@ -1,6 +1,7 @@
 /nbproject
 /dist
 /build
+/Sqlite
 .RunContact
 contact.txt
 .dep.inc
