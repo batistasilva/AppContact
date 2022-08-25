@@ -194,7 +194,7 @@ Contact* Contact::findContact(string searchQuery) {
  * with one space seprated in serachQuery parameter.
  * @param string serachQuery [string for searching list]
  **/
-void Contact::deleteContact(string searchQuery) {
+void Contact::deleteContactToLinkdList(string searchQuery) {
 
     if (head->getName() == searchQuery || head->getName() == searchQuery) {
         //
@@ -305,7 +305,7 @@ void Contact::insertBefore(string searchQuery, string name, string phone, string
 /**
  * printing all of contacts in the list
  */
-void Contact::showContacts() {
+void Contact::showContactsToLinkdList() {
     system("clear");
 
     cout << "\n\n" << "----------------------------------------------------------" << endl;
@@ -323,12 +323,12 @@ void Contact::showContacts() {
         cout << "----------------------------------------------------------" << endl;
     }
 
-};
+}
 
 /**
  * printing all of contacts in the list
  */
-bool Contact::saveContacts() {
+bool Contact::saveContactsToLinkdList() {
     string str_list;
     system("clear");
     cout << "\n\n" << "----------------------------------------------------------" << endl;
@@ -351,6 +351,66 @@ bool Contact::saveContacts() {
     return true;
 }
 
+/***
+ * Method to Create contact Table in MariaDB. 
+ */
+bool Contact::createContactToMariaDB() {
+    string strQuery = "CREATE DATABASE IF NOT EXISTS `ContactDB`; DROP TABLE IF EXISTS `ContactDB`.`contact`; ";
+    strQuery += "CREATE TABLE `ContactDB`.`contact` (`id` INTEGER NOT NULL AUTO_INCREMENT, "
+            "`name` VARCHAR(200) DEFAULT NULL , `address` VARCHAR(200) DEFAULT NULL , "
+            "`email` VARCHAR(200) DEFAULT NULL , `phone` VARCHAR(200) DEFAULT NULL , PRIMARY KEY (`id`));";
+    //
+    try {
+        //
+        MaDBContact* madb = new MaDBContact();
+        //
+        madb->setUsername("system");
+        madb->setPassword("sys2133");
+        madb->setDb("mysql");
+
+        ShowMessage("Inside Contact::createContactToMariaDB()!!", 7, 6);
+        // Instantiate Driver
+        sql::Driver* driver = sql::mariadb::get_driver_instance();
+
+        cout << "DB: " << madb->getDb() << " User: " << madb->getUsername() << " Password: " << madb->getPassword();
+
+        // Configure Connection
+        sql::SQLString url("jdbc:mariadb://localhost:3306/" + madb->getDb());
+        //        //
+        sql::Properties properties({
+            {"user", madb->getUsername()},
+            {"password", madb->getPassword()}
+        });
+
+        // Establish Connection
+        std::unique_ptr<sql::Connection> conn(driver->connect(url, properties));
+        //
+        if (!conn) {
+            ShowMessage("Error Connecting to MariaDB!!!", 5, 6);
+            return false;
+            // exit(EXIT_FAILURE);
+        }
+        // Create a new PreparedStatement
+        std::unique_ptr<sql::PreparedStatement> stmnt(conn->prepareStatement(strQuery));
+        //
+        if (!stmnt) {
+            ShowMessage("Error Connecting to MariaDB!!!", 5, 6);
+            return false;
+            // exit(EXIT_FAILURE);
+        }
+
+        // Execute query
+        stmnt->executeQuery();
+    } catch (sql::SQLException& e) {
+        std::cerr << "Error Creating new Contact: " << e.what() << std::endl;
+    }
+    //    
+    return true;
+}
+
+/***
+ * Method to Save LinkdList Contact to MariaDB Table.
+ */
 bool Contact::saveContactsToMariaDB() {
     //
     MaDBContact* madb = new MaDBContact();
@@ -413,6 +473,81 @@ bool Contact::saveContactsToMariaDB() {
         // Exit (Failed)
         return false;
     }
+
+    return true;
+}
+
+/***
+ * Method to Show All Contact Saved on MariaDB Table.
+ */
+bool Contact::showContactsToMariaDB() {
+    //
+    MaDBContact* madb = new MaDBContact();
+
+    //
+    madb->setUsername("system");
+    madb->setPassword("sys2133");
+    madb->setDb("ContactDB");
+
+    try {
+        ShowMessage("Inside Contact::showContactsToMariaDB()!!", 7, 6);
+        // Instantiate Driver
+        sql::Driver* driver = sql::mariadb::get_driver_instance();
+
+        cout << "DB: " << madb->getDb() << " User: " << madb->getUsername() << " Password: " << madb->getPassword();
+
+        // Configure Connection
+        sql::SQLString url("jdbc:mariadb://localhost:3306/" + madb->getDb());
+        //        //
+        sql::Properties properties({
+            {"user", madb->getUsername()},
+            {"password", madb->getPassword()}
+        });
+
+        // Establish Connection
+        std::unique_ptr<sql::Connection> conn(driver->connect(url, properties));
+        //
+        if (!conn) {
+            ShowMessage("Error Connecting to MariaDB!!!", 5, 6);
+            return false;
+            // exit(EXIT_FAILURE);
+        }
+
+        // Create a new Statement
+        std::unique_ptr<sql::Statement> stmnt(conn->createStatement());
+        // Execute query
+        //
+        if (!stmnt) {
+            ShowMessage("Error Connecting to MariaDB!!!", 5, 6);
+            return false;
+            // exit(EXIT_FAILURE);
+        }
+
+        // Execute query
+        sql::ResultSet *rs = stmnt->executeQuery("SELECT * FROM contact");
+        // Loop through and print results
+        while (rs->next()) {
+            cout << "|-----------------------------------------|" << endl;
+            cout << " Id......: [ " << rs->getInt(1) << " ]" << endl;
+            cout << " Name....: " << rs->getString(2) << endl;
+            cout << " Address.: " << rs->getString(3) << endl;
+            cout << " E-mail..: " << rs->getString(4) << endl;
+            cout << " Telephone:" << rs->getString(5) << endl;
+            cout << "|_________________________________________|" << endl;
+        }
+    } catch (sql::SQLException& e) {
+        std::cerr << "Error selecting tasks: " << e.what() << std::endl;
+    }
+    return true;
+}
+
+/***
+ * Method to Remove All Contact to MariaDB Table.
+ */
+bool Contact::delAllContactsToMariaDB() {
+    //
+    if (createContactToMariaDB())
+        ShowMessage("Database and Table created Sucessfully!!", 7, 6);
 
     return true;
 }
@@ -493,32 +628,179 @@ void Contact::setContactFromFLine(string fileline) {
     cout << " End Read line" << endl;
 }
 
-bool Contact::printDashboard() {
-
-    cout << "|----------------------------------------------------------------|" << "\n";
-    cout << "| " << "[               Main Menu                   ]            |" << endl;
-    cout << "|----------------------------------------------------------------|" << "\n";
-    cout << "| " << "( 1 ) [ Add Contact to Begining of List     ]                  |" << endl;
-    cout << "| " << "( 2 ) [ Add Contact to End of List          ]                  |" << endl;
-    cout << "| " << "( 3 ) [ Add Contact After Specific Contact  ]                  |" << endl;
-    cout << "| " << "( 4 ) [ Add Contact Before Specific Contact ]                  |" << endl;
-    cout << "| " << "( 5 ) [ Find Contact in List by Name        ]                  |" << endl;
-    cout << "| " << "( 6 ) [ Delete Specific Contact             ]                  |" << endl;
-    cout << "| " << "( 7 ) [        Show All Contacts            ]                  |" << endl;
-    cout << "| " << "( 8 ) [       Save Contact to File          ]                  |" << endl;
-    cout << "| " << "( 9 ) [ Manager Contact to Sqlite3 Database ]                  |" << endl;
-    cout << "| " << "( 10 )[ Manager Contact to MariaDB Database ]                  |" << endl;
-    cout << "| " << "( 11 )[              Exit                   ]                  |" << endl;
-    cout << "|----------------------------------------------------------------|" << "\n";
-    cout << "   select : ";
-    //
-    return true;
-}
-
-bool Contact::showMenuMariaDB() {
+/***
+ * Menu of options to Manager showMainMenu(). 
+ */
+void Contact::showMainMenu() {
     int op;
     bool RunWhile = true;
-    
+    while (RunWhile) {
+        //
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "| " << "     [           Main Menu                 ]                       |" << endl;
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "| " << "( 1 )[ Manager Linked List to Contact      ]                  |" << endl;
+        cout << "| " << "( 2 )[ Manager Contact to Sqlite3 Database ]                  |" << endl;
+        cout << "| " << "( 3 )[ Manager Contact to MariaDB Database ]                  |" << endl;
+        cout << "| " << "( 4 )[              Exit                   ]                  |" << endl;
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "   select : ";
+        //
+        cin >> op;
+        //
+        switch (op) {
+            case 1:
+                ShowMessage("Manager Linked List to Contact..!!", 7, 6);
+                printDashboard();
+                break;
+            case 2:
+                ShowMessage("Manager Contact to SQlite3..!!", 7, 6);
+                showMenuSqLite3();
+                //
+                break;
+            case 3:
+                ShowMessage("Manager Contact to MariaDB..!!", 7, 6);
+                showMenuMariaDB();
+                //do something
+                break;
+            case 4:
+                ShowMessage("Exit From Main Menu..!!", 7, 6);
+                RunWhile = false;
+                system("clear");
+                //do something
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+/***
+ * Menu of options to Manager Linked List(). 
+ */
+void Contact::printDashboard() {
+    int j, op;
+    string name, phone, address, email, searching;
+    Contact* f;
+    Contact* a;
+    Contact* ct;
+    ShowMsg* msg;
+
+    bool RunWhile = true;
+    //Read data from file
+    a->readFile();
+
+    while (RunWhile) {
+        //
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "| " << "[               Main Menu                   ]            |" << endl;
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "| " << "( 1 ) [ Add Contact to Begining of List     ]                  |" << endl;
+        cout << "| " << "( 2 ) [ Add Contact to End of List          ]                  |" << endl;
+        cout << "| " << "( 3 ) [ Add Contact After Specific Contact  ]                  |" << endl;
+        cout << "| " << "( 4 ) [ Add Contact Before Specific Contact ]                  |" << endl;
+        cout << "| " << "( 5 ) [ Find Contact in List by Name        ]                  |" << endl;
+        cout << "| " << "( 6 ) [ Delete Specific Contact             ]                  |" << endl;
+        cout << "| " << "( 7 ) [        Show All Contacts            ]                  |" << endl;
+        cout << "| " << "( 8 ) [       Save Contact to File          ]                  |" << endl;
+        cout << "| " << "( 9 ) [              Exit                   ]                  |" << endl;
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "   select : ";
+        //
+        cin >> op;
+        //
+        switch (op) {
+            case 1:
+                cout << "Inside addBegin..." << endl;
+                ct = ct->getContactFilled(); //Fill data to fields
+                a->addBegin(ct->getName(), ct->getPhone(), ct->getAddress(), ct->getEmail());
+                cout << "done :D" << endl;
+                break;
+            case 2:
+                ct = ct->getContactFilled(); //Fill data to fields
+                //
+                a->addEnd(name, phone, address, email);
+                cout << "done :D" << endl;
+                break;
+            case 3:
+                cout << "----------------------------------------------------" << endl;
+                cout << "|                   Search by Name                 |" << endl;
+                cout << "----------------------------------------------------" << endl;
+                cout << "Enter Serach Query :==> ";
+                cin.ignore();
+                getline(cin, searching, '\n');
+                //
+                f = a->find(searching);
+                //
+                if (f == NULL) {
+                    msg->ShowMessage("Contact Not Found...!!", 5, 6);
+                } else {
+                    ct = ct->getContactFilled(); //Fill data to fields
+                    a->insertAfter(f, ct->getName(), ct->getPhone(), ct->getAddress(), ct->getEmail());
+                }
+                break;
+            case 4:
+                cout << "----------------------------------------------------" << endl;
+                cout << "|                   Search by Name                 |" << endl;
+                cout << "----------------------------------------------------" << endl;
+                cout << "Enter Search Query :==> ";
+                cin.ignore();
+                getline(cin, searching, '\n');
+                //
+                f = a->find(searching);
+                //
+                if (f == NULL) {
+                    msg->ShowMessage("Contact Not Found...!!", 5, 6);
+                } else {
+                    ct = ct->getContactFilled(); //Fill data to fields
+                    a->insertBefore(searching, ct->getName(), ct->getPhone(), ct->getAddress(), ct->getEmail());
+                }
+                break;
+            case 5:
+                cout << "----------------------------------------------------" << endl;
+                cout << "|                   Search by Name                 |" << endl;
+                cout << "----------------------------------------------------" << endl;
+                cout << "Enter Search Query :==> ";
+                cin.ignore();
+                getline(cin, searching, '\n');
+                f = a->findContact(searching);
+                break;
+            case 6:
+                cout << "----------------------------------------------------" << endl;
+                cout << "|                   Search by Name                 |" << endl;
+                cout << "----------------------------------------------------" << endl;
+                cout << "Enter Search Query :==> ";
+                cin.ignore();
+                getline(cin, searching, '\n');
+                a->deleteContactToLinkdList(searching);
+                break;
+            case 7:
+                a->showContactsToLinkdList();
+                break;
+            case 8:
+                if (a->saveContactsToLinkdList()) {
+                    msg->ShowMessage("Contact Saved Sucessfully...!!", 7, 6);
+                } else {
+                    msg->ShowMessage("Error to Save Contact to file...!!", 4, 2);
+                }
+                break;
+            case 9:
+                RunWhile = false;
+                system("clear");
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+/***
+ * Menu of options from MariaDB(). 
+ */
+void Contact::showMenuMariaDB() {
+    int op;
+    bool RunWhile = true;
+
     while (RunWhile) {
         //
         cout << "|----------------------------------------------------------------|" << "\n";
@@ -527,12 +809,59 @@ bool Contact::showMenuMariaDB() {
         cout << "| " << "( 1 ) [ Save All Contacts from List to Database ]        |" << endl;
         cout << "| " << "( 2 ) [ Load All Contacts to List from Database ]        |" << endl;
         cout << "| " << "( 3 ) [ Delete All Contacts from Database       ]        |" << endl;
-        cout << "| " << "( 4 ) [        Return to Main Menu              ]        |" << endl;
-        cout << "| " << "( 5 ) [               Exit                      ]        |" << endl;
+        cout << "| " << "( 4 ) [               Exit                      ]        |" << endl;
         cout << "|----------------------------------------------------------------|" << "\n";
         cout << "   select : ";
         //
-        cin.ignore();
+        cin >> op;
+        //
+        switch (op) {
+            case 1:
+                ShowMessage("Inside Saved Contact to MariaDB..!!", 7, 6);
+                if (saveContactsToMariaDB())
+                    ShowMessage("Contact Saved Sucessfully...!!", 7, 6);
+                //Add data to MariaDB contact
+                break;
+            case 2:
+                ShowMessage("Inside Load Contact to MariaDB..!!", 7, 6);
+                if (showContactsToMariaDB())
+                    ShowMessage("Contact Load Sucessfully...!!", 7, 6);
+                //
+                break;
+            case 3:
+                ShowMessage("Delete Contact to MariaDB..!!", 7, 6);
+                if (delAllContactsToMariaDB())
+                    ShowMessage("All Contacts Removed Sucessfully...!!", 7, 6);
+                //do something
+                break;
+            case 4:
+                RunWhile = false;
+                system("clear");
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+/***
+ * Menu of options from SqLite3(). 
+ */
+void Contact::showMenuSqLite3() {
+    int op;
+    bool RunWhile = true;
+
+    while (RunWhile) {
+        //
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "| " << "                   Menu SqLite3                          |" << endl;
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "| " << "( 1 ) [ Save All Contacts from List to Database ]        |" << endl;
+        cout << "| " << "( 2 ) [ Load All Contacts to List from Database ]        |" << endl;
+        cout << "| " << "( 3 ) [   Delete All Contacts from Database     ]        |" << endl;
+        cout << "| " << "( 4 ) [                Exit                     ]        |" << endl;
+        cout << "|----------------------------------------------------------------|" << "\n";
+        cout << "   select : ";
         cin >> op;
         //
         switch (op) {
@@ -552,35 +881,11 @@ bool Contact::showMenuMariaDB() {
                 break;
             case 4:
                 //do something
-                break;
-            case 5:
-                //do something
-                return true;
+                RunWhile = false;
+                system("clear");
                 break;
             default:
                 break;
         }
     }
-
-
-
-    //
-    return true;
-}
-
-bool Contact::showMenuSqLite3() {
-    //
-    cout << "|----------------------------------------------------------------|" << "\n";
-    cout << "| " << "                   Menu SqLite3                          |" << endl;
-    cout << "|----------------------------------------------------------------|" << "\n";
-    cout << "| " << "( 1 ) [ Save All Contacts from List to Database ]        |" << endl;
-    cout << "| " << "( 2 ) [ Load All Contacts to List from Database ]        |" << endl;
-    cout << "| " << "( 3 ) [   Delete All Contacts from Database     ]        |" << endl;
-    cout << "| " << "( 4 ) [       Return to Menu Principal          ]        |" << endl;
-    cout << "| " << "( 5 ) [                Exit                     ]        |" << endl;
-    cout << "|----------------------------------------------------------------|" << "\n";
-    cout << "   select : ";
-    //
-    //
-    return true;
 }

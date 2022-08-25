@@ -76,14 +76,20 @@ public:
 
     void addBegin(string name, string phone, string address, string email);
     void addEnd(string name, string phone, string address, string email);
-    void deleteContact(string);
+    void deleteContactToLinkdList(string);
     void readFile();
 
     Contact* findContact(string);
     Contact* getContactFilled();
-    void showContacts();
-    bool saveContacts();
+    //
+    void showContactsToLinkdList();
+    bool saveContactsToLinkdList();
+    //
+    bool createContactToMariaDB();
     bool saveContactsToMariaDB();
+    bool showContactsToMariaDB();
+    bool delAllContactsToMariaDB();
+    //
     bool saveContactsToSqLite3();
     void insertAfter(Contact*, string, string, string, string);
     void insertBefore(string, string, string, string, string);
@@ -95,9 +101,10 @@ public:
      * 
      * @return [boolean for Infinite loop]
      */
-    bool printDashboard();
-    bool showMenuMariaDB();   
-    bool showMenuSqLite3();      
+    void showMainMenu();
+    void printDashboard();
+    void showMenuMariaDB();   
+    void showMenuSqLite3();      
     //
 
     string getAddress() const {
