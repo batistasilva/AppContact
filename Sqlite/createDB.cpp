@@ -1,7 +1,10 @@
 /* 
  * File:   createDB.cpp
  * Author: batista
- *
+ *  If you're using SQLite version 3.3+ you can easily create a table with:
+ *  create table if not exists TableName (col1 typ1, ..., colN typN)
+ *  In the same way, you can remove a table only if it exists by using:
+ *  drop table if exists TableName
  * Created on 18 de agosto de 2022, 14:37
  */
 

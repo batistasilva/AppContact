@@ -553,9 +553,13 @@ bool Contact::delAllContactsToMariaDB() {
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
     int i;
+    cout << "|---------------------------------------------------------|" << endl;
+
     for (i = 0; i < argc; i++) {
-        cout << azColName[i] << argv[i] << endl;
+        cout <<"\t" << azColName[i] << ": " << argv[i] << endl;
     }
+    cout << "|---------------------------------------------------------|" << endl;
+
     cout << endl;
     return 0;
 }
@@ -585,7 +589,7 @@ bool Contact::createContactsToSqLite3() {
     sqlite3 *db;
     char *zErrMsg = 0;
     int rc;
-    char *sql;
+    string sql;
     /* Open database */
     rc = sqlite3_open("Sqlite/database.db", &db);
     //
@@ -597,10 +601,10 @@ bool Contact::createContactsToSqLite3() {
     }
 
     /* Create SQL statement */
-    sql = "CREATE TABLE contact(id PRIMARY KEY NOT NULL, name TEXT NOT NULL, address CHAR(50) NOT NULL, email CHAR(50),phone CHAR(30));";
+    sql = "DROP TABLE IF EXISTS contact; CREATE TABLE contact(id PRIMARY KEY NOT NULL, name TEXT NOT NULL, address CHAR(50) NOT NULL, email CHAR(50),phone CHAR(30));";
 
     /* Execute SQL statement */
-    rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+    rc = sqlite3_exec(db, sql.c_str(), callback, 0, &zErrMsg);
 
     if (rc != SQLITE_OK) {
         cout << stderr << "SQL error: " << zErrMsg << endl;
@@ -619,27 +623,96 @@ bool Contact::createContactsToSqLite3() {
  */
 bool Contact::saveContactsToSqLite3() {
     //
-
+    //if (testIfContactExist() == false) {
     if (createContactsToSqLite3())
         ShowMessage("Contact to Sqlite3, Created Sucessfully!!!", 5, 6);
-
     //
+    //}
+    //
+    string str_list;
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+    string sql_list;
+    //
+    /* Open database */
+    rc = sqlite3_open("Sqlite/database.db", &db);
+
+    if (rc) {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return (0);
+    } else {
+        fprintf(stderr, "Opened database successfully\n");
+    }
+    //
+    if (last == NULL || head == NULL) {
+        ShowMessage("We found nothing in the list to Save...!!", 5, 6);
+        return false;
+    }
+    // 
+    int i = 1;
+    //
+    sql_list = " ";
+
+    for (Contact* n = head; n != NULL; n = n->next) {
+        //
+        /* Create SQL statement */
+        sql_list += "INSERT INTO contact (id, name, address, email, phone) VALUES (" + to_string(i) + ", '" + n->name + "', '" + n->address + "', '" + n->email + "', '" + n->phone + "');";
+
+        cout << sql_list << endl;
+
+        /* Execute SQL statement */
+        rc = sqlite3_exec(db, sql_list.c_str(), callback, 0, &zErrMsg);
+        if (rc != SQLITE_OK) {
+            fprintf(stderr, "SQL error: %s\n", zErrMsg);
+            sqlite3_free(zErrMsg);
+        } else {
+            fprintf(stdout, "Records created successfully\n");
+        }
+        //
+        cout << "----------------------------------------------------------" << endl;
+    }
+
+    sqlite3_close(db);
+
     return true;
 }
 
 bool Contact::showContactsToSqLite3() {
 
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+    char *sql;
+    const char* data = "Callback function called";
 
+    /* Open database */
+    rc = sqlite3_open("Sqlite/database.db", &db);
+
+    if (rc) {
+        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+        return (0);
+    } else {
+        fprintf(stderr, "Opened database successfully\n");
+    }
+
+    /* Create SQL statement */
+    sql = "SELECT * from contact";
+    /* Execute SQL statement */
+    rc = sqlite3_exec(db, sql, callback, (void*) data, &zErrMsg);
+
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+        return false;
+    } else {
+        fprintf(stdout, "Operation done successfully\n");
+    }
+
+    sqlite3_close(db);
     return true;
 }
 
-/***
- * Remove All Contacts to SqLite3
- */
-bool Contact::delAllContactsToSqLite3() {
-
-    return true;
-}
 
 /***
  * Set Contact from file line.
@@ -892,8 +965,7 @@ void Contact::showMenuMariaDB() {
         cout << "|----------------------------------------------------------------|" << "\n";
         cout << "| " << "( 1 ) [ Save All Contacts from List to Database ]        |" << endl;
         cout << "| " << "( 2 ) [ Load All Contacts to List from Database ]        |" << endl;
-        cout << "| " << "( 3 ) [ Delete All Contacts from Database       ]        |" << endl;
-        cout << "| " << "( 4 ) [               Exit                      ]        |" << endl;
+        cout << "| " << "( 3 ) [               Exit                      ]        |" << endl;
         cout << "|----------------------------------------------------------------|" << "\n";
         cout << "   select : ";
         //
@@ -902,6 +974,9 @@ void Contact::showMenuMariaDB() {
         switch (op) {
             case 1:
                 ShowMessage("Inside Saved Contact to MariaDB..!!", 7, 6);
+                if(createContactToMariaDB())
+                    ShowMessage("Contact Created Sucessfully...!!", 7, 6);
+                //
                 if (saveContactsToMariaDB())
                     ShowMessage("Contact Saved Sucessfully...!!", 7, 6);
                 //Add data to MariaDB contact
@@ -913,12 +988,6 @@ void Contact::showMenuMariaDB() {
                 //
                 break;
             case 3:
-                ShowMessage("Delete Contact to MariaDB..!!", 7, 6);
-                if (delAllContactsToMariaDB())
-                    ShowMessage("All Contacts Removed Sucessfully...!!", 7, 6);
-                //do something
-                break;
-            case 4:
                 RunWhile = false;
                 system("clear");
                 break;
@@ -942,8 +1011,7 @@ void Contact::showMenuSqLite3() {
         cout << "|----------------------------------------------------------------|" << "\n";
         cout << "| " << "( 1 ) [ Save All Contacts from List to Database ]        |" << endl;
         cout << "| " << "( 2 ) [ Load All Contacts to List from Database ]        |" << endl;
-        cout << "| " << "( 3 ) [   Delete All Contacts from Database     ]        |" << endl;
-        cout << "| " << "( 4 ) [                Exit                     ]        |" << endl;
+        cout << "| " << "( 3 ) [                Exit                     ]        |" << endl;
         cout << "|----------------------------------------------------------------|" << "\n";
         cout << "   select : ";
         cin >> op;
@@ -958,12 +1026,10 @@ void Contact::showMenuSqLite3() {
             case 2:
                 ShowMessage("Inside Load Contact to SqLite3..!!", 7, 6);
                 //
+                if (showContactsToSqLite3())
+                    ShowMessage("Contact Loaded Sucessfully...!!", 7, 6);
                 break;
             case 3:
-                ShowMessage("Delete Contact to SqLite3..!!", 7, 6);
-                //do something
-                break;
-            case 4:
                 //do something
                 RunWhile = false;
                 system("clear");

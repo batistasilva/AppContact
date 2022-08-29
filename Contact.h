@@ -95,7 +95,7 @@ public:
     bool createContactsToSqLite3();
     bool saveContactsToSqLite3();
     bool showContactsToSqLite3();
-    bool delAllContactsToSqLite3();    
+ 
     //
     void insertAfter(Contact*, string, string, string, string);
     void insertBefore(string, string, string, string, string);
